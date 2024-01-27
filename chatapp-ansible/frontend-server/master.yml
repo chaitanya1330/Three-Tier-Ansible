@@ -1,0 +1,7 @@
+---
+- hosts: frontend-group
+  remote_user: ubuntu
+  become: yes
+  roles:
+    - front-end roles
+    

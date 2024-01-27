@@ -1,0 +1,74 @@
+--- # creating playbook for frontend host
+ - name: frontend
+   hosts: frontend
+   user: ansible
+   become: yes
+   gather_facts: yes
+   tasks:
+     - name: install nginx package for chat app
+       apt: name=nginx state=present
+     - name: Copying gunicorn configurations to chatapp
+       copy:
+        src: /home/ansible/nginx/nginx.service
+        dest: /etc/nginx/sites-available/fundoo
+     - name: start nginx service
+       service:
+        name: nginx
+        state: started
+     - name: For enabling nginx sites enabled
+       file:
+        src: /etc/nginx/sites-available/fundoo
+        dest: /etc/nginx/sites-enabled/default
+        state: link
+     - name: restart nginx service
+       service:
+        name: nginx
+        state: restarted
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+What they gave is upone....what i done is : |||
+                                            ^^^
+--- # creating playbook for frontend host
+ - name: frontend Configuration
+   hosts: webservers
+   user: ubuntu
+   become: yes
+   gather_facts: yes
+   tasks:
+     - name: install nginx package for chat app
+       apt: name=nginx state=present
+------------------------------------------------------------------------------|
+# here we should create a file for giving the backend port i.e in ansible creating a file and giving the backend ip address.
+server {           
+        listen 80;                                                            |
+        server_name _default;
+        #location = /favicon.ico { access_log off; log_not_found off; }       |
+        location /static/ {
+                root /home/ubuntu/new_chatapp/fundoo;                         |
+        }
+        location / {
+               include proxy_params;
+               proxy_pass http://10.0.1.30:8000;                              |
+        }
+}
+
+------------------------------------------------------
+     - name: Copying gunicorn configurations to chatapp
+       copy:
+        src: /home/ubuntu/webserver/proxypass
+        dest: /etc/nginx/sites-available/fundoo
+
+---------------------------------------------
+     - name: start nginx service
+       service:
+        name: nginx
+        state: started
+     - name: For enabling nginx sites enabled
+       file:
+        src: /etc/nginx/sites-available/fundoo
+        dest: /etc/nginx/sites-enabled/default
+        state: link
+     - name: restart nginx service
+       service:
+        name: nginx
+        state: restarted
