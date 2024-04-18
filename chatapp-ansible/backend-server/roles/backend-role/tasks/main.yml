@@ -14,11 +14,16 @@
     name: virtualenv
     executable: pip3
 
-- name: cloning project from git
+- name: Check if .git directory exists
+  stat:
+      path: /home/ubuntu/new_chatapp/.git
+  register: git_repo_status
+
+- name: Clone the repository if .git directory doesn't exist
   git:
-   repo: https://github.com/peyyala7hills/new_chatapp
-   dest: /home/ubuntu/new_chatapp
-   clone: yes
+      repo: https://github.com/Arnab-Chowdhuri/new_chatapp.git
+      dest: /home/ubuntu/new_chatapp
+  when: git_repo_status.stat.exists == false
 
 - name: creating virtual environment inside new_chatapp
   command:
@@ -31,10 +36,10 @@
     virtualenv: /home/ubuntu/new_chatapp/venv
     virtualenv_python: python3
 
-# - name: Installing gunicorn
-#   pip:
-#     name: gunicorn
-#     executable: pip3
+- name: Installing gunicorn
+  pip:
+    name: gunicorn
+    executable: pip3
 
 - name: installing mysql-server
   apt: name=mysql-server state=present
@@ -63,25 +68,19 @@
 #    login_user: root
 #    login_password: mysql1234
 
-- name: creating chat_db database
-  mysql_db:
-    name: chat_db
-    login_host: localhost
-    login_user: root
-    login_password: mysql1234
+- name: installing mysql-server
+  apt: name=mysql-server state=present
 
-- name: editing settings.py file to change db configs
-  blockinfile:
-    path: /home/ubuntu/new_chatapp/fundoo/fundoo/settings.py
-    marker_begin: "    'default': {"
-    marker_end: "    }"
-    block: |-
-      "      'ENGINE': 'django.db.backends.mysql'",
-      "      'NAME': 'chat_db'",
-      "      'USER': 'root'",
-      "      'PASSWORD': 'mysql1234'",
-      "      'HOST': 'localhost'",
-      "      'PORT': '3306'",
+- name: intalling mysql-client
+  apt: name=mysql-client state=present
+
+- name: Start the MySQL service
+  action: service name=mysql state=started
+
+- name: Installing PyMySql
+  pip:
+    name: pymysql
+    executable: pip3
 
 - name: install default-libmysqlclient-dev package for chat app
   apt: name=default-libmysqlclient-dev state=present
@@ -103,6 +102,16 @@
     virtualenv: /home/ubuntu/new_chatapp/venv
     virtualenv_python: python3
 
+      #- name: Replace old database configuration with new one in settings.py
+  #replace:
+    #path: /home/ubuntu/new_chatapp/fundoo/fundoo/settings.py
+          #regexp: "{{ item.regexp }}"
+          #replace: "{{ item.replace }}"
+          #with_items:
+    #- { regexp: "'NAME': 'mysqldb',", replace: "'NAME': '{{ chatapp_db }}'," }
+          #       - { regexp: "'PASSWORD': 'admin12345',", replace: "'PASSWORD': '{{ chay1234 }}'," }
+          #- { regexp: "'HOST': 'mysqldb.ckz7bawd2dzf.ap-south-1.rds.amazonaws.com',", replace: "'HOST': '{{ localhost }}'," }
+          #        - { regexp: "'USER': 'admin',", replace: "'USER': '{{ root }}'," }
 
 - name: running python migrate
   django_manage:
