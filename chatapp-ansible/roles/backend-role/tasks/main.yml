@@ -36,24 +36,24 @@
     virtualenv: /home/ubuntu/new_chatapp/venv
     virtualenv_python: python3
 
-- name: Installing gunicorn
-  pip:
-    name: gunicorn
-    executable: pip3
+# - name: Installing gunicorn
+#   pip:
+#     name: gunicorn
+#     executable: pip3
 
-- name: installing mysql-server
-  apt: name=mysql-server state=present
+# - name: installing mysql-server
+#   apt: name=mysql-server state=present
 
-- name: intalling mysql-client
-  apt: name=mysql-client state=present
+# - name: intalling mysql-client
+#   apt: name=mysql-client state=present
 
-- name: Start the MySQL service
-  action: service name=mysql state=started
+# - name: Start the MySQL service
+#   action: service name=mysql state=started
 
-- name: Installing PyMySql
-  pip:
-    name: pymysql
-    executable: pip3
+# - name: Installing PyMySql
+#   pip:
+#     name: pymysql
+#     executable: pip3
 
 
 - name: installing mysql-server
