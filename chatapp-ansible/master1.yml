@@ -5,11 +5,3 @@
   connection: ssh
   roles:
     - frontend-role
-
-
-- hosts: web
-  remote_user: ubuntu
-  become: yes
-  connection: ssh
-  roles:
-    - backend-role
