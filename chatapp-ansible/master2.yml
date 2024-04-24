@@ -1,6 +1,0 @@
----
-- hosts: backend-group
-  remote_user: ubuntu
-  become: yes
-  roles:
-    - backend-role

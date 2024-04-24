@@ -1,0 +1,13 @@
+---
+- hosts: backend
+  remote_user: ubuntu
+  become: yes
+  roles:
+    - backend-role
+
+- hosts: frontend
+  remote_user: ubuntu
+  become: yes
+  connection: ssh
+  roles:
+    - frontend-role
