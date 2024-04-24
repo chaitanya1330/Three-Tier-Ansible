@@ -7,6 +7,6 @@ server {
   }
   location / {
       include proxy_params;
-      proxy_pass http://172.31.23.110:8000;
+      proxy_pass http://{{ proxy_pass_BE }}:8000;
   }
 }
