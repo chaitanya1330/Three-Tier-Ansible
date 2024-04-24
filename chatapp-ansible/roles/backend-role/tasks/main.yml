@@ -21,7 +21,7 @@
 
 - name: Clone the repository if .git directory doesn't exist
   git:
-      repo: https://github.com/Arnab-Chowdhuri/new_chatapp.git
+      repo: https://github.com/chaitanya1330/new_chatapp.git
       dest: /home/ubuntu/new_chatapp
   when: git_repo_status.stat.exists == false
 
@@ -55,18 +55,6 @@
     name: pymysql
     executable: pip3
 
-#- name: Create user
-#  mysql_user:
-#    name: root
-#    password: mysql1234
-#    login_host: localhost
-#- name: Creating new mysql user
-#- mysql_user:
-#  name: root
-#    password: mysql1234
-#    login_host: localhost
-#    login_user: root
-#    login_password: mysql1234
 
 - name: installing mysql-server
   apt: name=mysql-server state=present
