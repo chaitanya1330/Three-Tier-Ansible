@@ -2,6 +2,25 @@
 - name: First update the packagers
   apt: update_cache=yes force_apt_get=yes
 
+- name: Remove dpkg lock file
+  command: sudo rm -f /var/lib/dpkg/lock-frontend
+  ignore_errors: yes
+
+- name: Remove apt directory lock
+  command: sudo rm -f /var/cache/apt/archives/lock
+  ignore_errors: yes
+
+- name: Wait for 2 minutes
+  pause:
+    minutes: 2
+
+- name: Clean package cache if lock issue persists
+  command: sudo apt clean
+  ignore_errors: yes
+  when: >
+    "'E: Could not get lock' in ansible_run_result.stderr"
+
+
 - name: Install python3-pip, python3-dev and git
   apt: name='{{item}}' state=present
   with_items:
