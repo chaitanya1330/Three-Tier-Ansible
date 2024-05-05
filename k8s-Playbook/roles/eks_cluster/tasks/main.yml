@@ -1,0 +1,49 @@
+- name: Check if SSH key pair already exists
+  ansible.builtin.stat:
+    path: "/home/ubuntu/.ssh/k8s"
+  register: ssh_key_pair
+
+- name: Generate SSH key pair if it doesn't exist
+  ansible.builtin.openssh_keypair:
+    path: "/home/ubuntu/.ssh/k8s"
+    state: present
+  when: not ssh_key_pair.stat.exists
+
+
+
+- name: Create EKS cluster
+  hosts: localhost
+  tasks:
+    - name: Run eksctl command to create cluster
+      ansible.builtin.command: >
+        eksctl create cluster \
+          --name Kubernetes-cluster \
+          --region ap-south-1 \
+          --version 1.28 \
+          --managed \
+          --nodegroup-name workergroup \
+          --node-type t2.small \
+          --nodes-min 1 \
+          --nodes-max 3 \
+          --node-volume-size 20 \
+          --ssh-access \
+          --ssh-public-key k8s \
+          --asg-access \
+          --external-dns-access \
+          --full-ecr-access \
+          --kubeconfig /home/ubuntu/.kube/config
+
+- name: Update kubeconfig for AWS EKS cluster
+  ansible.builtin.shell:
+    cmd: "aws eks update-kubeconfig --name k8s-cluster --region ap-south-1"
+  register: update_kubeconfig
+
+- name: Check if kubeconfig update was successful
+  ansible.builtin.debug:
+    msg: "Kubeconfig updated successfully."
+  when: update_kubeconfig.rc == 0
+
+- name: Display error message if kubeconfig update failed
+  ansible.builtin.debug:
+    msg: "Failed to update kubeconfig. Error: {{ update_kubeconfig.stderr }}"
+  when: update_kubeconfig.rc != 0

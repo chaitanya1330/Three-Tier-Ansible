@@ -1,0 +1,44 @@
+- name: Update apt cache
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Install awscli
+  become: yes
+  apt:
+    name: awscli
+    state: present
+    update_cache: yes
+
+- name: Install Python 3 pip
+  become: yes
+  apt:
+    name: python3-pip
+    state: present
+
+- name: Upgrade awscli
+  become: yes
+  pip:
+    name: awscli
+    state: latest
+ 
+- name: Install unzip package
+  apt:
+    name: unzip
+    state: present
+
+- name: Download and install eksctl
+  get_url:
+    url: https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_{{ ansible_system | lower }}_amd64.tar.gz
+    dest: /tmp/eksctl_{{ ansible_system | lower }}_amd64.tar.gz
+
+- name: Extract eksctl binary
+  ansible.builtin.shell: tar xzf /tmp/eksctl_{{ ansible_system | lower }}_amd64.tar.gz -C /tmp
+  args:
+    executable: /bin/bash
+
+- name: Move eksctl binary to /usr/local/bin
+  ansible.builtin.shell: mv /tmp/eksctl /usr/local/bin/eksctl
+  args:
+    executable: /bin/bash
+

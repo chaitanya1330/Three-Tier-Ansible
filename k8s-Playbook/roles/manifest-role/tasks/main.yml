@@ -1,0 +1,10 @@
+
+- name: Copy file
+  ansible.builtin.copy:
+    src: ./templates/nginx-deployment.j2
+    dest: /home/ubuntu/nginx-deployment.j2
+
+- name: Apply Nginx deployment
+  kubectl:
+    src: /home/ubuntu/nginx-deployment.yaml
+    state: present

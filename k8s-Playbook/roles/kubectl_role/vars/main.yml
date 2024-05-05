@@ -1,0 +1,5 @@
+
+aws_access_key_id: xxxxxxxxxxxxxx
+aws_secret_access_key: xxxxxxxxxxxxxxxxxxxxxxx
+default_region: ap-south-1
+default_output_format: none

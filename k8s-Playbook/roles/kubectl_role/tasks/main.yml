@@ -1,0 +1,44 @@
+- name: Download kubectl binary
+  become: yes
+  ansible.builtin.shell:
+    cmd: |
+      curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  args:
+    executable: /bin/bash
+
+- name: Download kubectl checksum file
+  become: yes
+  ansible.builtin.shell:
+    cmd: |
+      curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+  args:
+    executable: /bin/bash
+
+- name: Validate kubectl binary checksum
+  become: yes
+  ansible.builtin.shell:
+    cmd: |
+      echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+  args:
+    executable: /bin/bash
+
+- name: Install kubectl
+  become: yes
+  ansible.builtin.command:
+    cmd: sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+- name: Test kubectl version
+  become: yes
+  ansible.builtin.command:
+    cmd: kubectl version --client
+
+
+- name: Run aws configure non-interactively
+  become: yes
+  ansible.builtin.command: >
+    aws configure set aws_access_key_id {{ aws_access_key_id }} &&
+    aws configure set aws_secret_access_key {{ aws_secret_access_key }} &&
+    aws configure set region {{ default_region }} &&
+    aws configure set output {{ default_output_format }}
+ 
+    

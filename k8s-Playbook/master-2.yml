@@ -1,0 +1,7 @@
+--- # Creating Targets for the Servers
+- hosts: master
+  user: ubuntu
+  become: yes
+  connection: ssh
+  roles:
+      - kubectl_role
