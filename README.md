@@ -1,2 +1,2 @@
-# Three-Tier-Ansible
-This is a python Three tier archietecture which is deployed through Ansible Playbooka
+# Playbooks Located in Master Branch
+This is a python Three tier archietecture which is deployed through Ansible Playbooks
